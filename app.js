@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHTTP = require('express-graphql');
-const { buildSchema } = require('graphql')
+const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -58,4 +59,10 @@ app.use('/grapghql', graphqlHTTP({
         graphiql: true
 }));
 
-app.listen(4000);
+mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0-lc4fu.mongodb.net/graphql?retryWrites=true&w=majority`).then( () => {
+    app.listen(5000, () => {
+        console.log('listening in port 5000');
+    });
+} ).catch(err => {
+    console.log(err);
+});
