@@ -10,9 +10,24 @@ const User = require('./models/user');
 
 const app = express();
 
-const events = [];
-
 app.use(bodyParser.json());
+
+const events = eventIds => {
+    return Event.find({ _id: { $in: eventIds } }).then(events => {
+        return events.map(event => {
+            return { ...event._doc, creator: user.bind(this, event.creator) }
+        }) 
+    }).catch(err => {
+        throw err;
+    });
+};
+const user = userId => {
+    return User.findById(userId).then(user => {
+        return { ...user._doc, createdEvents: events.bind(this, user._doc.createdEvents) }
+    }).catch(err => {
+        throw err;
+    });
+};
 
 app.use('/grapghql', graphqlHTTP({
         schema: buildSchema(`
@@ -62,7 +77,7 @@ app.use('/grapghql', graphqlHTTP({
             events: () => {
                 return Event.find().populate('creator').then(events => {
                     return events.map(event =>  {
-                        return  { ...event._doc };
+                        return  { ...event._doc, creator: user.bind(this, event._doc.creator) };
                     });
                 }).catch(err => {
                     throw err;
