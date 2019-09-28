@@ -4,6 +4,8 @@ const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
+const Event = require('./models/event');
+
 const app = express();
 
 const events = [];
@@ -42,24 +44,34 @@ app.use('/grapghql', graphqlHTTP({
         `),
         rootValue: {
             events: () => {
-                return events;
+                return Event.find().then(events => {
+                    return events.map(event =>  {
+                        return  { ...event._doc };
+                    });
+                }).catch(err => {
+                    throw err;
+                });
             },
             createEvent: (args) => {
-                const event = {
-                    _id: Math.random().toString(),
+                const event = new Event ({
                     title: args.eventInput.title,
                     description: args.eventInput.description,
                     price: +args.eventInput.price,
-                    date: args.eventInput.date
-                }
-                events.push(event);
-                return event;
+                    date: new Date(args.eventInput.date)
+                })
+                return event.save().then(result => {
+                    console.log(result);
+                    return { ...result._doc };
+                }).catch(err => {
+                    console.log(err);
+                    throw err
+                });
             }
         },
         graphiql: true
 }));
 
-mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0-lc4fu.mongodb.net/graphql?retryWrites=true&w=majority`).then( () => {
+mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0-lc4fu.mongodb.net/gql?retryWrites=true&w=majority`).then( () => {
     app.listen(5000, () => {
         console.log('listening in port 5000');
     });
