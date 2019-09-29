@@ -17,12 +17,19 @@ module.exports = buildSchema(`
             creator: User!
         }
 
+        type Users {
+            _id: ID!
+            email: String!
+            password: String
+        }
+
         type User {
             _id: ID!
             email: String!
             password: String
             createdEvents: [Event!]
         }
+
 
         type AuthData {
             userId: ID!
@@ -45,6 +52,7 @@ module.exports = buildSchema(`
         type RootQuery {
             events: [Event!]!
             bookings: [Booking!]!
+            users: [User!]!
             login(email: String!, password: String!): AuthData!
         }
 
