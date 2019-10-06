@@ -12,4 +12,12 @@ module.exports = {
             throw err;
         }
     },
+    user: async (args) => {
+        try {
+            const user = await User.findOne({ email: args.email });
+            return  { ...user._doc, createdEvents: events.bind(this, user._doc.createdEvents) };
+        } catch (err) {
+            throw err;
+        }
+    },
 };

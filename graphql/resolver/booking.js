@@ -12,11 +12,11 @@ module.exports = {
             throw new Error('unauthenticated');
         }
         try {
-            const bookings = await Booking.find();
+            const bookings = await Booking.find({user: req.userId});
             return bookings.map( booking => {
                 return { ...booking._doc,
                         user: user.bind(this, booking._doc.user),
-                        events: singleEvents.bind(this, booking._doc.event),
+                        event: singleEvents.bind(this, booking._doc.event),
                         createdAt: new Date(booking._doc.createdAt).toISOString(), 
                         updatedAt: new Date(booking._doc.updatedAt).toISOString() 
                     };
@@ -44,7 +44,7 @@ module.exports = {
         }
         const fetchedEvent = await Event.findOne({_id: args.eventId});
         const booking = new Booking({
-            user: '5d8eb31e6e61e61d9cf8cbac',
+            user: req.userId,
             event: fetchedEvent
         });
         const result = await booking.save();
