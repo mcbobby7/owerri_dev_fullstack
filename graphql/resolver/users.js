@@ -20,4 +20,24 @@ module.exports = {
             throw err;
         }
     },
+    updateUser: async (args, req) => {
+        if (!req.isAuth) {
+            throw new Error('unauthenticated');
+        }
+        try {
+            const user = await User.findByIdAndUpdate({ _id: args.updateUserInput.email }, {$set: 
+                {   email: args.updateUserInput.email,
+                    firstName: args.updateUserInput.firstName,
+                    lastName: args.updateUserInput.lastName,
+                    occupation: args.updateUserInput.occupation,
+                    github: args.updateUserInput.github,
+                    twitter: args.updateUserInput.twitter,
+                    linkedIn: args.updateUserInput.linkedIn
+                }},
+                {multi: true, new: true});
+            return  { ...user._doc };
+        } catch (err) {
+            throw err;
+        }
+    },
 };
