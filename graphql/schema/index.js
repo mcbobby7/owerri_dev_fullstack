@@ -79,7 +79,7 @@ module.exports = buildSchema(`
             events: [Event!]!
             bookings: [Booking!]!
             users: [User!]!
-            user(email: String!): User!
+            user: User!
             event(eventId: ID!): Event!
         }
 

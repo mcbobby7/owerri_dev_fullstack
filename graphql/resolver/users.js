@@ -12,9 +12,9 @@ module.exports = {
             throw err;
         }
     },
-    user: async (args) => {
+    user: async (args, req) => {
         try {
-            const user = await User.findOne({ email: args.email });
+            const user = await User.findOne({ _id: req.userId });
             return  { ...user._doc, createdEvents: events.bind(this, user._doc.createdEvents) };
         } catch (err) {
             throw err;
@@ -25,7 +25,7 @@ module.exports = {
             throw new Error('unauthenticated');
         }
         try {
-            const user = await User.findByIdAndUpdate({ _id: args.updateUserInput.email }, {$set: 
+            const user = await User.findByIdAndUpdate({ _id: req.userId }, {$set: 
                 {   email: args.updateUserInput.email,
                     firstName: args.updateUserInput.firstName,
                     lastName: args.updateUserInput.lastName,
