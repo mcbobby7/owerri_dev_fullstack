@@ -6,6 +6,7 @@ const GraphqlSchema = require('./graphql/schema/index');
 const GraphqlResolver = require('./graphql/resolver/index');
 const isAuth = require('./middleware/is-auth');
 const Cors = require('cors');
+const path = require('path')
 
 const app = express();
 
@@ -13,7 +14,7 @@ app.use(bodyParser.json());
 
 app.use(isAuth);
 
-app.use(Cors('*'));
+app.use(Cors());
 
 app.use('/grapghql', graphqlHTTP({
         schema: GraphqlSchema,
@@ -21,9 +22,17 @@ app.use('/grapghql', graphqlHTTP({
         graphiql: true
 }));
 
-mongoose.connect(`mongodb+srv://${process.env.USERNAME}:${process.env.PASSWORD}@cluster0-lc4fu.mongodb.net/gql?retryWrites=true&w=majority`).then( () => {
-    app.listen(5000, () => {
-        console.log('listening in port 5000');
+app.use(express.static('public'));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 5000; 
+
+mongoose.connect(`mongodb+srv://bobby:1234@cluster0-lc4fu.mongodb.net/gql?retryWrites=true&w=majority`).then( () => {
+    app.listen(PORT, () => {
+        console.log(`listening in port ${PORT}`);
     });
 } ).catch(err => {
     console.log(err);
