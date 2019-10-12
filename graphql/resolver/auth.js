@@ -20,9 +20,7 @@ module.exports = {
                 password: hashedPassword
             })
             const result = await user.save();
-            const token = jwt.sign({userId: user._id, email: user.email}, 'secretKey', {
-                expiresIn: '2h'
-            });
+            const token = jwt.sign({userId: user._id, email: user.email}, 'secretKey' );
             return { ...result._doc, token: token, tokenExpiration: 2, password: null };
         } catch (err) {
             throw err;
@@ -37,9 +35,7 @@ module.exports = {
         if (!isEqual) {
             throw new Error('password is incoreect');
         }
-        const token = jwt.sign({userId: user.id, email: user.email}, 'secretKey', {
-            expiresIn: '2h'
-        });
+        const token = jwt.sign({userId: user.id, email: user.email}, 'secretKey' );
         return { userId: user.id, token: token, tokenExpiration: 2, email: user.email };
     }
 
